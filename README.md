@@ -1,7 +1,7 @@
 # YamlE
 
 Библиотека разбора и загрузки yaml файлов в переменные окружения.
-* Использует FastYaml
+* Использует FastYaml https://github.com/processone/fast_yaml/issues
 * Преобразует всё в мапы и работает с ними.
 
 **Вызов:**
