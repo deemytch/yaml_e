@@ -1,0 +1,24 @@
+vars:
+  pg: &pg
+    username: postgres
+    namespace: :app_id
+
+  controls: &controls
+    [ababa, galam, aga]: Control.None
+
+  exchanges: &exchanges
+    [search, get]: Control.GET
+    [publish, delete, account]: Control.POST
+
+amqp:
+  conn:
+    name: :int
+    port: 15671
+    login: username
+  <<: [*controls, *exchanges]
+
+http:
+  defaults: true
+
+db:
+  <<: *pg
