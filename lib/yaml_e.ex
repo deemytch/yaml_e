@@ -25,12 +25,17 @@ defmodule YamlE do
 """
 
   def into_env( fname, options \\ [] ) do
-    parse_file( fname, parse_options( options ))
-    |> Map.to_list
+    parse_file(fname,parse_options( options ))
     |> Enum.map(
-        fn{ k, v } ->
-          Application.put_all_env([k], Map.to_list(v))
-        end)
+          fn{k0,v0}->{
+                      k0,
+                      Enum.map(
+                        v0,
+                        fn{k1,v1}->{k1,v1}end
+                      )
+                     }
+          end)
+    |> :application.set_env
   end
 
   def parse_file( fname, options \\ [] ) do
@@ -45,18 +50,12 @@ defmodule YamlE do
 
   def parse( source, options ) when is_map(source) do
     cfg = parse_options( options )
-    IO.puts("options: #{ inspect cfg }")
-
     if Map.has_key?( source, "vars" ) do
       defaults = source["vars"]
       source |> Map.delete("vars") |> subst( defaults )
     else
       source
     end
-    |> (fn(src)->
-        IO.puts("cfg.keys_as_atom == #{ cfg.keys_as_atom }")
-        src
-        end).()
     |> (fn(src)->if cfg.keys_as_atom, do: symbolize(src), else: src end).()
     |> (fn(src)->if cfg.unwrap_keys, do: unwrap_keys(src), else: src end).()
   end
