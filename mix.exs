@@ -4,7 +4,7 @@ defmodule YamlE.MixProject do
   def project do
     [
       app: :yaml_e,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.12",
       start_permanent: false,
       deps: [{:fast_yaml, ">= 1.0.31"}]]

@@ -44,6 +44,12 @@ defmodule YamlE do
       parse_options( options ) )
   end
 
+  def parse( string, options \\ [] ) when is_binary(string) do
+    parse(
+      :fast_yaml.decode(string, [:maps]),
+      parse_options( options ) )
+  end
+
   def parse( {:ok, [source|_]}, options ) when is_map(source) do
     parse( source, parse_options( options ) )
   end
@@ -89,9 +95,9 @@ defmodule YamlE do
            {
              to_atom_maybe(key),
              cond do
-               String.match?(val, ~r/^:\w[[:print:]]+$/) ->
+               val =~ ~r/^:\w[[:print:]]+$/) ->
                   (  String.trim_leading(val, ":") |> String.to_atom )
-               String.match?(val, ~r/^\d+$/) ->
+               val =~ ~r/^\d+$/ ->
                   String.to_integer(val)
                true -> val
              end
@@ -128,4 +134,10 @@ defmodule YamlE do
     Map.merge(defaults, Map.new( opts ))
   end
 
+  def map_to_list(map) when is_map(map) do
+    Enum.map( map, fn
+      {k,v} when is_map(v) -> { k, map_to_list(v) }
+      {k,v} -> { k,v }
+    end)
+  end
 end
