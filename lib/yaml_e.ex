@@ -5,6 +5,7 @@ defmodule YamlE do
     Преобразует всё в мапы и работает с ними.
   Вызов:
     YamlE.parse( map, options )
+    YamlE.parse( string, options )
     YAMLE.parse_file( filename, options )
 
   Опции:
@@ -25,7 +26,7 @@ defmodule YamlE do
 """
 
   def into_env( fname, options \\ [] ) do
-    parse_file(fname,parse_options( options ))
+    parse_file(fname,options)
     |> Enum.map(
           fn{k0,v0}->{
                       k0,
@@ -44,14 +45,15 @@ defmodule YamlE do
       parse_options( options ) )
   end
 
-  def parse( string, options \\ [] ) when is_binary(string) do
-    parse(
-      :fast_yaml.decode(string, [:maps]),
-      parse_options( options ) )
+  def parse( string, options \\ [] )
+
+  def parse( string, options ) when is_binary(string) do
+    :fast_yaml.decode(string, [:maps])
+    |> parse(options)
   end
 
   def parse( {:ok, [source|_]}, options ) when is_map(source) do
-    parse( source, parse_options( options ) )
+    parse( source, options )
   end
 
   def parse( source, options ) when is_map(source) do
@@ -95,7 +97,7 @@ defmodule YamlE do
            {
              to_atom_maybe(key),
              cond do
-               val =~ ~r/^:\w[[:print:]]+$/) ->
+               val =~ ~r/^:\w[[:print:]]+$/ ->
                   (  String.trim_leading(val, ":") |> String.to_atom )
                val =~ ~r/^\d+$/ ->
                   String.to_integer(val)
