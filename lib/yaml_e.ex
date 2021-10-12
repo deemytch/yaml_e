@@ -47,7 +47,7 @@ defmodule YamlE do
 
   def parse( string, options \\ [] )
 
-  def parse( string, options ) when is_binary(string) do
+  def parse( string, options ) when is_list(string) do
     :fast_yaml.decode(string, [:maps])
     |> parse(options)
   end
